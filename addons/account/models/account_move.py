@@ -3949,13 +3949,13 @@ class AccountMoveLine(models.Model):
             if account_to_write:
                 account_type = line.account_id.user_type_id.type
                 if line.move_id.is_sale_document(include_receipts=True):
-                    if (account_type == 'receivable' and account_to_write.user_type_id.type != account_type) \
-                            or (account_type != 'receivable' and account_to_write.user_type_id.type == 'receivable'):
-                        raise UserError(_("You can only set an account having the receivable type on payment terms lines for customer invoice."))
+                    if (account_type  in ('receivable','payable') and account_to_write.user_type_id.type  not in ('receivable','payable')) \
+                            or (account_type not in ('receivable','payable') and account_to_write.user_type_id.type  in ('receivable','payable')):
+                        raise UserError(_("You can only set an account having the receivable or payable type on payment terms lines for customer invoice."))
                 if line.move_id.is_purchase_document(include_receipts=True):
-                    if (account_type == 'payable' and account_to_write.user_type_id.type != account_type) \
-                            or (account_type != 'payable' and account_to_write.user_type_id.type == 'payable'):
-                        raise UserError(_("You can only set an account having the payable type on payment terms lines for vendor bill."))
+                    if (account_type  in ('receivable','payable') and account_to_write.user_type_id.type  not in ('receivable','payable')) \
+                            or (account_type not in ('receivable','payable') and account_to_write.user_type_id.type  in ('receivable','payable')):
+                        raise UserError(_("You can only set an account having the receivable or payable type on payment terms lines for vendor bill."))
 
         # Tracking stuff can be skipped for perfs using tracking_disable context key
         if not self.env.context.get('tracking_disable', False):
